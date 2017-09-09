@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace可以理解成虚拟文件夹-->
+<mapper namespace="org.lanqiao.dao.IUserDao">
+    <!--resultType：返回值类型-->
+    <!--parameterType:传入参数的类型-->
+    <!--查询所有用户-->
+       <select id="getAllUser" resultType="org.lanqiao.bean.User">
+        select * from dum
+    </select>
+    <!--根据id查询单个用户-->
+    <select id="getUserById" resultType="org.lanqiao.bean.User" parameterType="int">
+        select * from Dum where stu_id=#{stu_id}
+    </select>
+
+    <!--name和pass是表里的字段名   #{name} #{pass}是对象里的字段名-->
+    <!--插入一个用户-->
+    <insert id="addUser" parameterType="org.lanqiao.bean.User">
+        insert into Dum(stu_id,stu_name) values(#{stu_id},#{stu_name})
+    </insert>
+    <!--根据id删除用户-->
+    <delete id="delUserById" parameterType="int">
+        delete from Dum where stu_id=#{stu_id}
+    </delete>
+
+    <!--根据id更新用户-->
+    <update id="updateUserById" parameterType="org.lanqiao.bean.User">
+        update Dum set stu_name=#{stu_name} where stu_id=#{stu_id}
+    </update>
+
+    <!--根据条件查询用户-->
+    <select id="getUserCondition" resultType="org.lanqiao.bean.User">
+        select * from dum  where 1=1
+        <if test="stuId>0">
+            and stu_id=#{stuId}
+        </if>
+        <if test="stuName != null">
+            /*字符串拼接*/
+            and stu_name like concat(concat('%',#{stuName}),'%')
+        </if>
+    </select>
+    <!--根据id和条件更新用户-->
+    <update id="updateUserByCond" parameterType="org.lanqiao.bean.User">
+        update Dum
+        <set>
+            <if test="stuName!=null &amp;&amp;!&quot;&quot;.equals(stuName)">
+                stu_name=#{stuName}
+            </if>
+        </set>
+        where stu_id=#{stuId}/*前面是数据库，后边属性*/
+    </update>
+    <select id="getUserIn" resultType="org.lanqiao.bean.User">
+        select * from dum where stu_id IN
+        <foreach item="item"  index="index" collection="list" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+    </select>
+</mapper>
